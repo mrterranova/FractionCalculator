@@ -17,20 +17,34 @@ public class Main {
 
         intro();
         while (isCalculating) {
-        System.out.print("--------------------------------------------------------\nPlease enter an operation (+, -, /, *, = or Q to quit):");
-        String operator = input.nextLine();
-        if(operator.equals("q")){ operator.toUpperCase();}
-        getOperation(operator, input);
+            System.out.print("--------------------------------------------------------\nPlease enter an operation (+, -, /, *, = or Q to quit):");
+            String operator = input.nextLine();
+            if (operator.equals("q")) {
+                operator.toUpperCase();
+                isCalculating = false;
+                break;
+            }
+            operator = getOperation((operator), input);
             getFraction(input, count, fractionsArr);
             String frac1 = fractionsArr[0];
             String frac2 = fractionsArr[1];
             String[] tempArr1 = frac1.split("/", 0);
             String[] tempArr2 = frac2.split("/", 0);
-            Fraction firstFraction = new Fraction(Integer.parseInt(tempArr1[0]), Integer.parseInt(tempArr1[1]));
-            Fraction secondFraction = new Fraction(Integer.parseInt(tempArr2[0]), Integer.parseInt(tempArr2[1]));
+            //case where single value add 1 to denominator.
+            int denominatortemp = 1;
+            if (tempArr1.length == 2) {
+                denominatortemp = Integer.parseInt(tempArr1[1]);
+            }
+            ;
+            if (tempArr2.length == 2) {
+                denominatortemp = Integer.parseInt(tempArr2[1]);
+            }
+            ;
+            Fraction firstFraction = new Fraction(Integer.parseInt(tempArr1[0]), denominatortemp);
+            Fraction secondFraction = new Fraction(Integer.parseInt(tempArr2[0]), denominatortemp);
 
-            Fraction calculation = new Fraction(4,7);
-            System.out.println("Operator: "+operator);
+            Fraction calculation = new Fraction();
+
 
             switch (operator) {
                 case "Q":
@@ -51,13 +65,13 @@ public class Main {
                 case "=":
                     boolean isEqual = calculation.equals(secondFraction);
                     if (isEqual) {
-                        equalStr = "equ";
+                        equalStr = "are equal";
                     } else {
-                        equalStr = "!equ";
+                        equalStr = "are not equal";
                     }
                     break;
             }
-            printResults(equalStr, operator, firstFraction, secondFraction, calculation);
+            normalizeResults(equalStr, operator, firstFraction, secondFraction, calculation);
         }
     }
 
@@ -66,7 +80,7 @@ public class Main {
     }
 
     private static String getOperation(String operator, Scanner input) {
-        while (!operator.matches("[+/*=]") && !operator.equalsIgnoreCase("Q") && !operator.equals("-")) {
+        while (!operator.trim().matches("[+/*=]") && !operator.trim().equalsIgnoreCase("Q") && !operator.trim().equals("-")) {
             System.out.print("Invalid input (+, -, /, *, = or Q to quit). Try again: ");
             operator = input.nextLine();
         }
@@ -107,11 +121,37 @@ public class Main {
         return true;
     }
 
-    private static void printResults(String equalStr, String operator, Fraction firstFraction, Fraction secondFraction, Fraction calculation) {
-        if (equalStr.equals("equ")) {
-            System.out.println(firstFraction.toString() + " " + operator + " " + secondFraction.toString() + " = " + equalStr);
+    public static void normalizeResults(String equalStr, String operator, Fraction firstFraction, Fraction secondFraction, Fraction calculation) {
+        String firstNormalizedFraction = "";
+        String secondNormalizedFraction = "";
+        String calculationNormalizedFraction = "";
+        String[] normalizeFirstFrac = firstFraction.toString().split("/", 0);
+        if (normalizeFirstFrac.length == 2 && normalizeFirstFrac[1].equals("1")) {
+            firstNormalizedFraction = normalizeFirstFrac[0];
         } else {
-            System.out.println(firstFraction.toString() + " " + operator + " " + secondFraction.toString() + " = " + calculation);
+            firstNormalizedFraction = firstFraction.toString();
+        }
+        String[] normalizeSecondFrac = secondFraction.toString().split("/", 0);
+        if (normalizeSecondFrac.length == 2 && normalizeSecondFrac[1].equals("1")) {
+            secondNormalizedFraction = normalizeSecondFrac[0];
+        } else {
+            secondNormalizedFraction = secondFraction.toString();
+        }
+        String[] normalizeCalcFrac = calculation.toString().split("/", 0);
+        if (normalizeCalcFrac.length == 2 && normalizeCalcFrac[1].equals("1")) {
+            calculationNormalizedFraction = normalizeCalcFrac[0];
+        } else {
+            calculationNormalizedFraction = calculation.toString();
+        }
+
+        printResults(equalStr, operator, firstNormalizedFraction, secondNormalizedFraction, calculationNormalizedFraction);
+    }
+
+    private static void printResults(String equalStr, String operator, String firstNormalizedFrac, String secondNormalizedFrac, String calcNormalizedFrac) {
+        if (equalStr.equals("are equal") || equalStr.equals("are not equal")) {
+            System.out.println(firstNormalizedFrac + " " + operator + " " + secondNormalizedFrac + " = " + equalStr);
+        } else {
+            System.out.println(firstNormalizedFrac + " " + operator + " " + secondNormalizedFrac + " = " + calcNormalizedFrac);
         }
     }
 }

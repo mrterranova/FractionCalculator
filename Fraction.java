@@ -23,7 +23,7 @@ public class Fraction {
     }
     //initializes the object to 0
     public Fraction(){
-        this(0, 0);
+        this(0);
     }
 
     public int getNumerator() {
@@ -35,7 +35,7 @@ public class Fraction {
     }
 
     public String toString() {
-        return numerator + " / " + denominator;
+        return numerator + "/" + denominator;
     }
 
     public double toDouble() {
@@ -70,6 +70,7 @@ public class Fraction {
         int divNumerator = (this.numerator * other.denominator);
         int divDenominator = (this.denominator * other.denominator);
         Fraction myFrac = new Fraction(divNumerator, divDenominator);
+        myFrac.toLowestTerms();
         return myFrac;
     }
 
@@ -90,6 +91,7 @@ public class Fraction {
         int commonDenominator = gcd(this.numerator, this.denominator);
         numerator = this.numerator / commonDenominator;
         denominator = this.denominator / commonDenominator;
+
     }
 
     public int gcd(int num, int den) {
